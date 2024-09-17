@@ -15,3 +15,15 @@ export const fetchArticles = () => {
       throw err;
     });
 };
+
+export const fetchArticleById = (article_id) => {
+  return api
+    .get(`/articles/${article_id}`)
+    .then((response) => {
+      return response.data.article;
+    })
+    .catch((err) => {
+      console.error(`Error fetching article with ID ${article_id}:`, err);
+      throw err;
+    });
+};

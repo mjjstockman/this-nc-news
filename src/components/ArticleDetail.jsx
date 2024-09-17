@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchArticles } from '../../utils/api';
+import { fetchArticleById } from '../../utils/api';
+import Card from 'react-bootstrap/Card';
 
 const ArticleDetail = () => {
   const { article_id } = useParams();
@@ -8,7 +9,7 @@ const ArticleDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchArticles(article_id)
+    fetchArticleById(article_id)
       .then((fetchedArticle) => {
         setArticle(fetchedArticle);
         setIsLoading(false);
@@ -23,10 +24,30 @@ const ArticleDetail = () => {
     return <p>Loading article...</p>;
   }
 
+  if (!article) {
+    return <p>Article not found</p>;
+  }
+
   return (
-    <div>
-      <p>ARTICLE DETAIL</p>
-    </div>
+    <Card className='article-card mb-3'>
+      <Card.Img
+        variant='top'
+        src={article.article_img_url}
+        alt={article.title}
+        className='article-image'
+      />
+      <Card.Body>
+        <Card.Title>{article.title}</Card.Title>
+        <Card.Text>
+          <p>Topic: {article.topic}</p>
+          <p>Author: {article.author}</p>
+          <p>Created at: {new Date(article.created_at).toLocaleDateString()}</p>
+          <p>Votes: {article.votes}</p>
+          <p>Comments: {article.comment_count}</p>
+          <p>{article.body}</p>
+        </Card.Text>
+      </Card.Body>
+    </Card>
   );
 };
 
