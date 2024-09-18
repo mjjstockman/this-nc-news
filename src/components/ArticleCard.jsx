@@ -1,7 +1,7 @@
 import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
 
-const ArticleCard = ({ article, showBody = false }) => {
+const ArticleCard = ({ article }) => {
   return (
     <Link to={`/articles/${article.article_id}`}>
       <Card className='article-card mb-3'>
@@ -21,7 +21,7 @@ const ArticleCard = ({ article, showBody = false }) => {
             </p>
             <p>Votes: {article.votes}</p>
             <p>Comments: {article.comment_count}</p>
-            {showBody && <p>{article.body}</p>}
+            <p>{article.body}</p>
           </Card.Text>
         </Card.Body>
       </Card>
