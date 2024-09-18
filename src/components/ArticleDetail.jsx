@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { fetchArticleById } from '../../utils/api';
 import Card from 'react-bootstrap/Card';
 import CommentCard from './CommentCard';
+import Icons from './Icons';
 
 const ArticleDetail = () => {
   const { article_id } = useParams();
@@ -49,6 +50,12 @@ const ArticleDetail = () => {
             <p>Votes: {article.votes}</p>
             <p>Comments: {article.comment_count}</p>
             <p>{article.body}</p>
+            <button>
+              <Icons type='thumbs-up' /> Like
+            </button>
+            <button>
+              <Icons type='thumbs-down' /> Dislike
+            </button>
           </Card.Text>
         </Card.Body>
       </Card>
