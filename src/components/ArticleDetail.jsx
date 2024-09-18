@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchArticleById } from '../../utils/api';
+import { fetchArticleById, patchArticleById } from '../../utils/api';
 import Card from 'react-bootstrap/Card';
 import CommentCard from './CommentCard';
 import Icons from './Icons';
@@ -9,6 +9,7 @@ const ArticleDetail = () => {
   const { article_id } = useParams();
   const [article, setArticle] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdatingVotes, setIsUpdatingVotes] = useState(false);
 
   useEffect(() => {
     fetchArticleById(article_id)
@@ -22,8 +23,28 @@ const ArticleDetail = () => {
       });
   }, [article_id]);
 
+  const handleVote = (inc_votes) => {
+    setIsUpdatingVotes(true);
+    patchArticleById(article_id, inc_votes)
+      .then((updatedArticle) => {
+        setArticle((prevArticle) => ({
+          ...prevArticle,
+          votes: updatedArticle.votes,
+        }));
+        setIsUpdatingVotes(false);
+      })
+      .catch((err) => {
+        console.error('Error updating votes:', err);
+        setIsUpdatingVotes(false);
+      });
+  };
+
   if (isLoading) {
     return <p>Loading article...</p>;
+  }
+
+  if (isUpdatingVotes) {
+    return <p>Updating votes...</p>;
   }
 
   if (!article) {
@@ -50,10 +71,11 @@ const ArticleDetail = () => {
             <p>Votes: {article.votes}</p>
             <p>Comments: {article.comment_count}</p>
             <p>{article.body}</p>
-            <button>
+
+            <button onClick={() => handleVote(1)}>
               <Icons type='thumbs-up' /> Like
             </button>
-            <button>
+            <button onClick={() => handleVote(-1)}>
               <Icons type='thumbs-down' /> Dislike
             </button>
           </Card.Text>
