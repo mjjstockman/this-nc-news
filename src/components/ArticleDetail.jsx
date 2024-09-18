@@ -24,7 +24,13 @@ const ArticleDetail = () => {
   }, [article_id]);
 
   const handleVote = (inc_votes) => {
-    setIsUpdatingVotes(true);
+    if (!article) return;
+
+    setArticle((prevArticle) => ({
+      ...prevArticle,
+      votes: prevArticle.votes + inc_votes,
+    }));
+
     patchArticleById(article_id, inc_votes)
       .then((updatedArticle) => {
         setArticle((prevArticle) => ({
@@ -35,16 +41,15 @@ const ArticleDetail = () => {
       })
       .catch((err) => {
         console.error('Error updating votes:', err);
-        setIsUpdatingVotes(false);
+        setArticle((prevArticle) => ({
+          ...prevArticle,
+          votes: prevArticle.votes - inc_votes,
+        }));
       });
   };
 
   if (isLoading) {
     return <p>Loading article...</p>;
-  }
-
-  if (isUpdatingVotes) {
-    return <p>Updating votes...</p>;
   }
 
   if (!article) {
@@ -72,12 +77,18 @@ const ArticleDetail = () => {
             <p>Comments: {article.comment_count}</p>
             <p>{article.body}</p>
 
-            <button onClick={() => handleVote(1)}>
-              <Icons type='thumbs-up' /> Like
-            </button>
-            <button onClick={() => handleVote(-1)}>
-              <Icons type='thumbs-down' /> Dislike
-            </button>
+            {isUpdatingVotes ? (
+              <p>Updating votes...</p>
+            ) : (
+              <>
+                <button onClick={() => handleVote(1)}>
+                  <Icons type='thumbs-up' /> Like
+                </button>
+                <button onClick={() => handleVote(-1)}>
+                  <Icons type='thumbs-down' /> Dislike
+                </button>
+              </>
+            )}
           </Card.Text>
         </Card.Body>
       </Card>
