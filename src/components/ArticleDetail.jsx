@@ -10,6 +10,7 @@ const ArticleDetail = () => {
   const [article, setArticle] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdatingVotes, setIsUpdatingVotes] = useState(false);
+  const [voteError, setVoteError] = useState(null);
 
   useEffect(() => {
     fetchArticleById(article_id)
@@ -26,10 +27,13 @@ const ArticleDetail = () => {
   const handleVote = (inc_votes) => {
     if (!article) return;
 
+    const originalVotes = article.votes;
     setArticle((prevArticle) => ({
       ...prevArticle,
       votes: prevArticle.votes + inc_votes,
     }));
+    setIsUpdatingVotes(true);
+    setVoteError(null);
 
     patchArticleById(article_id, inc_votes)
       .then((updatedArticle) => {
@@ -43,8 +47,10 @@ const ArticleDetail = () => {
         console.error('Error updating votes:', err);
         setArticle((prevArticle) => ({
           ...prevArticle,
-          votes: prevArticle.votes - inc_votes,
+          votes: originalVotes,
         }));
+        setVoteError('Failed to update votes. Please try again.');
+        setIsUpdatingVotes(false);
       });
   };
 
@@ -81,14 +87,20 @@ const ArticleDetail = () => {
               <p>Updating votes...</p>
             ) : (
               <>
-                <button onClick={() => handleVote(1)}>
+                <button
+                  onClick={() => handleVote(1)}
+                  disabled={isUpdatingVotes}>
                   <Icons type='thumbs-up' /> Like
                 </button>
-                <button onClick={() => handleVote(-1)}>
+                <button
+                  onClick={() => handleVote(-1)}
+                  disabled={isUpdatingVotes}>
                   <Icons type='thumbs-down' /> Dislike
                 </button>
               </>
             )}
+
+            {voteError && <p>{voteError}</p>}
           </Card.Text>
         </Card.Body>
       </Card>
