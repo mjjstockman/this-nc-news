@@ -1,19 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchArticleById } from '../../utils/api';
+import { fetchArticleById, fetchCommentsByArticleId } from '../../utils/api';
 import Card from 'react-bootstrap/Card';
 import CommentCard from './CommentCard';
 import VoteButtons from './VoteButtons';
+import CommentForm from './CommentForm';
 
 const ArticleDetail = () => {
   const { article_id } = useParams();
   const [article, setArticle] = useState(null);
+  const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     fetchArticleById(article_id)
       .then((fetchedArticle) => {
         setArticle(fetchedArticle);
+        return fetchCommentsByArticleId(article_id);
+      })
+      .then((fetchedComments) => {
+        setComments(fetchedComments);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -21,6 +28,10 @@ const ArticleDetail = () => {
         setIsLoading(false);
       });
   }, [article_id]);
+
+  const handleAddComment = (newComment) => {
+    setComments((currComments) => [newComment, ...currComments]);
+  };
 
   if (isLoading) {
     return <p>Loading article...</p>;
@@ -49,12 +60,12 @@ const ArticleDetail = () => {
             </p>
             <p>Comments: {article.comment_count}</p>
             <p>{article.body}</p>
-
             <VoteButtons article_id={article_id} initialVotes={article.votes} />
           </Card.Text>
         </Card.Body>
       </Card>
-      <CommentCard />
+      <CommentForm articleId={article_id} onCommentSubmit={handleAddComment} />
+      <CommentCard comments={comments} />
     </>
   );
 };

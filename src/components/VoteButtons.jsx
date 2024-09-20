@@ -41,7 +41,7 @@ const VoteButtons = ({ article_id, initialVotes }) => {
         </>
       )}
 
-      {voteError && <p>{voteError}</p>}
+      {voteError && <div>{voteError}</div>}
       <p>Votes: {votes}</p>
     </div>
   );

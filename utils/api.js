@@ -54,3 +54,15 @@ export const patchArticleById = (article_id, inc_votes) => {
       throw err;
     });
 };
+
+export const postCommentByArticleId = (article_id, comment) => {
+  return api
+    .post(`/articles/${article_id}/comments`, comment)
+    .then((response) => {
+      return response.data.comment;
+    })
+    .catch((err) => {
+      console.error(`Error posting comment for article ID ${article_id}:`, err);
+      throw err;
+    });
+};
