@@ -14,14 +14,14 @@ const ArticleCard = ({ article }) => {
         <Card.Body>
           <Card.Title>{article.title}</Card.Title>
           <Card.Text>
-            <p>Topic: {article.topic}</p>
-            <p>Author: {article.author}</p>
-            <p>
+            <div>Topic: {article.topic}</div>
+            <div>Author: {article.author}</div>
+            <div>
               Created at: {new Date(article.created_at).toLocaleDateString()}
-            </p>
-            <p>Votes: {article.votes}</p>
-            <p>Comments: {article.comment_count}</p>
-            <p>{article.body}</p>
+            </div>
+            <div>Votes: {article.votes}</div>
+            <div>Comments: {article.comment_count}</div>
+            <div>{article.body}</div>
           </Card.Text>
         </Card.Body>
       </Card>

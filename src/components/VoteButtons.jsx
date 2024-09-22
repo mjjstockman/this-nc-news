@@ -1,48 +1,61 @@
 import { useState } from 'react';
 import { patchArticleById } from '../../utils/api';
 import Icons from './Icons';
+import ToastNotification from './ToastNotification';
 
 const VoteButtons = ({ article_id, initialVotes }) => {
   const [votes, setVotes] = useState(initialVotes);
   const [isUpdatingVotes, setIsUpdatingVotes] = useState(false);
-  const [voteError, setVoteError] = useState(null);
+
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastVariant, setToastVariant] = useState('success');
 
   const handleVote = (inc_votes) => {
     const originalVotes = votes;
     setVotes(votes + inc_votes);
     setIsUpdatingVotes(true);
-    setVoteError(null);
 
     patchArticleById(article_id, inc_votes)
       .then((updatedArticle) => {
         setVotes(updatedArticle.votes);
         setIsUpdatingVotes(false);
+        setToastMessage('Vote submitted successfully!');
+        setToastVariant('success');
+        setShowToast(true);
       })
       .catch((err) => {
         console.error('Error updating votes:', err);
         setVotes(originalVotes);
-        setVoteError('Failed to update votes. Please try again.');
         setIsUpdatingVotes(false);
+        setToastMessage('Error submitting vote.');
+        setToastVariant('danger');
+        setShowToast(true);
       });
   };
 
   return (
     <div>
-      {isUpdatingVotes ? (
-        <p>Updating votes...</p>
-      ) : (
-        <>
-          <button onClick={() => handleVote(1)} disabled={isUpdatingVotes}>
-            <Icons type='thumbs-up' /> Like
-          </button>
-          <button onClick={() => handleVote(-1)} disabled={isUpdatingVotes}>
-            <Icons type='thumbs-down' /> Dislike
-          </button>
-        </>
-      )}
+      <>
+        <button onClick={() => handleVote(1)} disabled={isUpdatingVotes}>
+          <Icons type='thumbs-up' />{' '}
+          {isUpdatingVotes ? 'Updating Votes...' : 'Like'}
+        </button>
+        <button onClick={() => handleVote(-1)} disabled={isUpdatingVotes}>
+          <Icons type='thumbs-down' />{' '}
+          {isUpdatingVotes ? 'Updating Votes...' : 'Dislike'}
+        </button>
+      </>
 
-      {voteError && <div>{voteError}</div>}
+      {/* {voteError && <div>{voteError}</div>} */}
       <p>Votes: {votes}</p>
+
+      <ToastNotification
+        show={showToast}
+        message={toastMessage}
+        variant={toastVariant}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 };

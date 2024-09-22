@@ -52,7 +52,7 @@ const ArticleDetail = () => {
         />
         <Card.Body>
           <Card.Title>{article.title}</Card.Title>
-          <Card.Text>
+          <div>
             <p>Topic: {article.topic}</p>
             <p>Author: {article.author}</p>
             <p>
@@ -61,7 +61,7 @@ const ArticleDetail = () => {
             <p>Comments: {article.comment_count}</p>
             <p>{article.body}</p>
             <VoteButtons article_id={article_id} initialVotes={article.votes} />
-          </Card.Text>
+          </div>
         </Card.Body>
       </Card>
       <CommentForm articleId={article_id} onCommentSubmit={handleAddComment} />
